@@ -1,14 +1,32 @@
 ﻿@page "/blog"
+@inject DataContext Context
+@attribute [StreamRendering]
 
 <PageTitle>Blog</PageTitle>
 <h3>Blog</h3>
 
+@if(posts.Count == 0)
+{
+    <p><em>Loading Blog Posts....</em></p>
+}
+else
+@foreach(var post in posts)
+{
 <div>
-    <p>Article Title</p>
-    <p>Published Date</p>
-    <p>Description</p>
-    <a href="">Read More</a>
+    <p>@post.Title</p>
+    <p>@post.PublishedDate</p>
+    <p>@post.Content</p>
+    <a href="/article/{@post.Id}">Read More</a>
 </div>
-@code {
+    
+}
 
+@code {
+    List<BlogPost> posts = new List<BlogPost>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Task.Delay(1000);
+        posts = await Context.BlogPosts.ToListAsync();
+    }
 }
