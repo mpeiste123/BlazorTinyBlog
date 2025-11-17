@@ -10,15 +10,19 @@
     <p><em>Loading Blog Posts....</em></p>
 }
 else
+{
+    <a href="edit-article">Create new  article </a>
+    
 @foreach(var post in posts)
 {
 <div>
     <p>@post.Title</p>
     <p>@post.PublishedDate</p>
     <p>@post.Content</p>
-    <a href="/article/{@post.Id}">Read More</a>
+    <a href="/article/@post.Id">Read More</a>
 </div>
     
+}
 }
 
 @code {

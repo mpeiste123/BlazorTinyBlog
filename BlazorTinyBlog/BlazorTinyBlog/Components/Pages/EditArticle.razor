@@ -1,0 +1,111 @@
+﻿@page "/edit-article/"
+@page "/edit-article/{Id:int}"
+@using BlazorTinyBlog.Models
+@inject DataContext Context
+@attribute [StreamRendering]
+
+
+@if (Id is null)
+{
+    <PageTitle>Create a new Article</PageTitle>
+    <h3>Create a New Article</h3>
+}
+else if (Post is not null)
+{
+    <PageTitle>Edit "@Post.Title"</PageTitle>
+    <h3>Edit "@Post.Title"</h3>
+}
+@if (Post is not null)
+{
+
+    <EditForm Model="Post" OnSubmit="HandleSubmit" FormName="ArticleForm">
+        <div>
+            <label for="title">Title</label>
+            <InputText id="title" @bind-Value="Post.Title" class="form-control" />
+        </div>
+        <div>
+            <label for="publishedDate">Date</label>
+            <InputDate id="publishedDate" @bind-Value="Post.PublishedDate" class="form-control" />
+        </div>
+        <div>
+            <label for="content">Content</label>
+            <InputTextArea id="content" @bind-Value="Post.Content" class="form-control" />
+        </div>
+        <div>
+            <InputCheckbox id="isPublished" @bind-Value="Post.IsPublished" class="form-check-input" />
+            <label for="isPublished">Published</label>
+        </div>
+        <button type="submit" class="btn btn-primary">Save</button>
+
+
+    </EditForm>
+}
+<p>@status</p>
+@code {
+    [Parameter]
+    public int? Id { get; set; }
+
+    [SupplyParameterFromForm]
+    BlogPost? Post { get; set; }
+
+    string status = string.Empty;
+
+
+    // With Static Server Side Rendering , when we call
+    // the OnParametersSetAsync method is called we override
+    // the Post object with the result object at every call
+    // so we should
+    protected override async Task OnParametersSetAsync()
+    {
+        if (Id is not null)
+        {
+
+            //We want the Id of the post here
+            var result = await Context.BlogPosts.FindAsync(Id);
+            if (result is not null)
+            {
+                //with the null-coalescing operator
+                // we set Post with result only when
+                // Post is not null
+                Post ??= result;
+            }
+        }
+        else
+        {
+            // Only if Post is null
+            Post ??= new();
+        }
+    }
+    async Task HandleSubmit()
+    {
+        if (Id is not null)
+        {
+            await UpdatArticle();
+        }
+    }
+    async Task UpdatArticle()
+    {
+        var dbArticle = await Context.BlogPosts.FindAsync(Id);
+        if (dbArticle is not null && Post is not null)
+        {
+            dbArticle.Title = Post.Title;
+            dbArticle.PublishedDate = Post.PublishedDate;
+            dbArticle.IsPublished = Post.IsPublished;
+
+            var result = await Context.SaveChangesAsync();
+            if (result == 1)
+
+            {
+                status = "Article has been updated!";
+            }
+            else
+            {
+                status = "Article has NOT been upadated!";
+            }
+
+
+        }
+    }
+
+
+}

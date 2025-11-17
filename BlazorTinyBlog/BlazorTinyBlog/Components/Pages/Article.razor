@@ -1,0 +1,43 @@
+﻿@page "/article/{Id:int}"
+@inject DataContext Context;
+@attribute [StreamRendering]
+
+
+<PageTitle>@post?.Title</PageTitle>
+<h3>@post?.Title</h3>
+
+@if(post is null)
+{
+    <p><em>Loading Blog Post....</em></p>
+}
+else
+{
+    <PageTitle>@post.Title</PageTitle>
+    
+    <a href="edit-article/@post.Id">Edit article </a>
+<div>
+    <p>@post.PublishedDate</p>
+    <p>@post.Content</p>
+    
+</div>
+}
+
+@code {
+    //This is a parameter 
+    // To be able to grab the Id parameter from the url
+    [Parameter]
+    public int Id { get; set; }
+
+
+    BlogPost? post = null;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        //We want the Id of the post here
+        var result = await Context.BlogPosts.FindAsync(Id);
+        if(result is not null)
+        {
+            post = result;
+        }
+    }
+}
