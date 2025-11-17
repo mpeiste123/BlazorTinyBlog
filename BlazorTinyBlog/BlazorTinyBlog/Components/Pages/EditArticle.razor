@@ -82,6 +82,26 @@ else if (Post is not null)
         {
             await UpdatArticle();
         }
+        else
+        {
+            await CreateArticle();
+        }
+    }
+
+    async Task CreateArticle()
+    {
+        if (Post is null)
+            return;
+        Context.BlogPosts.Add(Post);
+        var result = await Context.SaveChangesAsync();
+        if (result == 1)
+        {
+            status = "Article has been Added";
+        }
+        else
+        {
+            status = "Article has not been Added";
+        }
     }
     async Task UpdatArticle()
     {
