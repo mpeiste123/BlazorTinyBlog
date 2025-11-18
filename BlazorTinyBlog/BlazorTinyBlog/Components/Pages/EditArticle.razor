@@ -2,6 +2,7 @@
 @page "/edit-article/{Id:int}"
 @using BlazorTinyBlog.Models
 @inject DataContext Context
+@inject NavigationManager NavigationManager
 @attribute [StreamRendering]
 
 
@@ -40,6 +41,14 @@ else if (Post is not null)
 
     </EditForm>
 }
+<p>
+    Dangr Zone !
+    <br/>
+    <form @onsubmit="DeleteArticle" @formname="DeletArticleForm" method="post">
+        <button class="btn btn-danger" @onclick="DeleteArticle">Delete Article</button>
+        <AntiforgeryToken/>
+    </form>
+</p>
 <p>@status</p>
 @code {
     [Parameter]
@@ -126,6 +135,16 @@ else if (Post is not null)
 
         }
     }
+    async Task DeleteArticle()
+    {
+        var dbArticle = await Context.BlogPosts.FindAsync(Id);
+        if(dbArticle is not null)
+        {
+            Context.BlogPosts.Remove(dbArticle);
+           await Context.SaveChangesAsync();
 
+            NavigationManager.NavigateTo("/blog");
+        }
+    }
 
 }
