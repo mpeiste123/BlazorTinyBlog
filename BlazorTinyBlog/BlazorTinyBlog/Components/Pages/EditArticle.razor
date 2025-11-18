@@ -19,7 +19,7 @@ else if (Post is not null)
 @if (Post is not null)
 {
 
-    <EditForm Model="Post" OnSubmit="HandleSubmit" FormName="ArticleForm">
+    <EditForm Enhance Model="Post" OnSubmit="HandleSubmit" FormName="ArticleForm">
         <div>
             <label for="title">Title</label>
             <InputText id="title" @bind-Value="Post.Title" class="form-control" />
@@ -42,7 +42,7 @@ else if (Post is not null)
     </EditForm>
 }
 <p>
-    Dangr Zone !
+    Danger Zone !
     <br/>
     <form @onsubmit="DeleteArticle" @formname="DeletArticleForm" method="post">
         <button class="btn btn-danger" @onclick="DeleteArticle">Delete Article</button>
