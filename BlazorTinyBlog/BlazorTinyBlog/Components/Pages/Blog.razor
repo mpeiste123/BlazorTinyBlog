@@ -1,7 +1,12 @@
 ﻿@page "/blog"
 @inject DataContext Context
-@attribute [StreamRendering]
+@* @attribute [StreamRendering] *@
+@rendermode @(new InteractiveServerRenderMode(prerender:false))
 
+@* // By default Prerendering is enabled in webAsseembly and Blazor Server in .Net 8
+// The page is initially rendered on th server and the server will send th static html to th client
+// (This is the first result we see), After that we see the loading message and again th result. 
+ *@
 <PageTitle>Blog</PageTitle>
 <h3>Blog</h3>
 
