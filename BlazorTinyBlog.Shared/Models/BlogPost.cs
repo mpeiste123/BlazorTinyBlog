@@ -1,4 +1,4 @@
-﻿namespace BlazorTinyBlog.Models
+﻿namespace BlazorTinyBlog.Shared.Models
 {
     public class BlogPost
     {

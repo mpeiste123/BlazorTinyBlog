@@ -12,4 +12,8 @@
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="8.0.22" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\BlazorTinyBlog.Shared\BlazorTinyBlog.Shared.csproj" />
+  </ItemGroup>
+
 </Project>
