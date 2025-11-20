@@ -1,6 +1,8 @@
 using BlazorTinyBlog.Client.Pages;
 using BlazorTinyBlog.Components;
 using BlazorTinyBlog.Data;
+using BlazorTinyBlog.Services;
+using BlazorTinyBlog.Shared.Services;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -9,6 +11,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents()
     .AddInteractiveWebAssemblyComponents();
+builder.Services.AddControllers();
+
 
 builder.Services.AddDbContext<DataContext>(options =>
 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
@@ -17,6 +21,7 @@ builder.Services.AddScoped(sp => new HttpClient
 {
     BaseAddress = new Uri(builder.Configuration.GetSection("BaseUri").Value!)
 });
+builder.Services.AddScoped<IBlogPostService, BlogPostService>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -32,7 +37,7 @@ else
 }
 
 app.UseHttpsRedirection();
-
+app.MapControllers();
 app.UseStaticFiles();
 app.UseAntiforgery();
 

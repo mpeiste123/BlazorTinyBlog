@@ -1,10 +1,10 @@
 ﻿@page "/edit-article/"
 @page "/edit-article/{Id:int}"
-@using BlazorTinyBlog.Models
-@inject DataContext Context
+@using BlazorTinyBlog.Shared.Models
+@inject IBlogPostService BlogPostService
 @inject NavigationManager NavigationManager
 @* @attribute [StreamRendering] *@
-@rendermode InteractiveServer
+@rendermode InteractiveWebAssembly
 
 
 @if (Id is null)
@@ -55,7 +55,7 @@ else if (Post is not null)
     [Parameter]
     public int? Id { get; set; }
 
-    
+
     BlogPost? Post { get; set; }
 
     string status = string.Empty;
@@ -71,7 +71,7 @@ else if (Post is not null)
         {
 
             //We want the Id of the post here
-            var result = await Context.BlogPosts.FindAsync(Id);
+            var result = await BlogPostService.GetBlogPostByIdAsync((int)Id);
             if (result is not null)
             {
                 //with the null-coalescing operator
@@ -102,8 +102,8 @@ else if (Post is not null)
     {
         if (Post is null)
             return;
-        Context.BlogPosts.Add(Post);
-        var result = await Context.SaveChangesAsync();
+
+        var result = await BlogPostService.CreateBlogPost(Post);
         if (result == 1)
         {
             status = "Article has been Created";
@@ -115,37 +115,34 @@ else if (Post is not null)
     }
     async Task UpdatArticle()
     {
-        var dbArticle = await Context.BlogPosts.FindAsync(Id);
-        if (dbArticle is not null && Post is not null)
+        if (Id is null || Post is null)
         {
-            dbArticle.Title = Post.Title;
-            dbArticle.PublishedDate = Post.PublishedDate;
-            dbArticle.IsPublished = Post.IsPublished;
-
-            var result = await Context.SaveChangesAsync();
-            if (result == 1)
-
-            {
-                status = "Article has been updated!";
-            }
-            else
-            {
-                status = "Article has NOT been upadated!";
-            }
-
+            status = "Article has NOT been upadated!";
+            return;
 
         }
+        var result = await BlogPostService.UpdateBlogPostAsync((int)Id, Post);
+        if (result == 1)
+
+        {
+            status = "Article has been updated!";
+        }
+        else
+        {
+            status = "Article has NOT been upadated!";
+        }
+
+
     }
+
     async Task DeleteArticle()
     {
-        var dbArticle = await Context.BlogPosts.FindAsync(Id);
-        if (dbArticle is not null)
-        {
-            Context.BlogPosts.Remove(dbArticle);
-            await Context.SaveChangesAsync();
+        if(Id is null )
+            return;
 
-            NavigationManager.NavigateTo("/blog");
-        }
+        await BlogPostService.DeleteBlogPostAsync((int)Id);
+        NavigationManager.NavigateTo("/blog");
+
     }
 
 }

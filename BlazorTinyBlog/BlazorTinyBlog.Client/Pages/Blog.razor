@@ -1,7 +1,8 @@
 ﻿@page "/blog"
-@inject DataContext Context
+
+@inject IBlogPostService BlogPostService
 @* @attribute [StreamRendering] *@
-@rendermode @(new InteractiveServerRenderMode(prerender:false))
+@rendermode @(new InteractiveWebAssemblyRenderMode(prerender:false))
 
 @* // By default Prerendering is enabled in webAsseembly and Blazor Server in .Net 8
 // The page is initially rendered on th server and the server will send th static html to th client
@@ -36,6 +37,6 @@ else
     protected override async Task OnInitializedAsync()
     {
         await Task.Delay(1000);
-        posts = await Context.BlogPosts.ToListAsync();
+        posts = await BlogPostService.GetAllBlogPostsAsync() ;
     }
 }

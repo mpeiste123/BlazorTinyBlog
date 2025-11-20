@@ -1,5 +1,5 @@
 ﻿@page "/article/{Id:int}"
-@inject DataContext Context;
+@inject IBlogPostService BlogPostService;
 @attribute [StreamRendering]
 
 
@@ -34,7 +34,7 @@ else
     protected override async Task OnParametersSetAsync()
     {
         //We want the Id of the post here
-        var result = await Context.BlogPosts.FindAsync(Id);
+        var result = await BlogPostService.GetBlogPostByIdAsync(Id);
         if(result is not null)
         {
             post = result;
